@@ -1,0 +1,241 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="SchoolDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Course">
+          <Key>
+            <PropertyRef Name="CourseID" />
+          </Key>
+          <Property Name="CourseID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CourseName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Location" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="TeacherID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Student">
+          <Key>
+            <PropertyRef Name="StuıdentID" />
+          </Key>
+          <Property Name="StuıdentID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StudentName" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'SchoolDB.dbo.StudentAddress' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="StudentAddress">
+          <Key>
+            <PropertyRef Name="StudentID" />
+            <PropertyRef Name="Address1" />
+            <PropertyRef Name="City" />
+            <PropertyRef Name="State" />
+          </Key>
+          <Property Name="StudentID" Type="int" Nullable="false" />
+          <Property Name="Address1" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Address2" Type="nvarchar(max)" />
+          <Property Name="City" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="State" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Teacher">
+          <Key>
+            <PropertyRef Name="TeacherID" />
+          </Key>
+          <Property Name="TeacherID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TeacherName" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Course_Teacher">
+          <End Role="Teacher" Type="Self.Teacher" Multiplicity="1" />
+          <End Role="Course" Type="Self.Course" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Teacher">
+              <PropertyRef Name="TeacherID" />
+            </Principal>
+            <Dependent Role="Course">
+              <PropertyRef Name="TeacherID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StudentAddress_Student">
+          <End Role="Student" Type="Self.Student" Multiplicity="1" />
+          <End Role="StudentAddress" Type="Self.StudentAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student">
+              <PropertyRef Name="StuıdentID" />
+            </Principal>
+            <Dependent Role="StudentAddress">
+              <PropertyRef Name="StudentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="SchoolDBModelStoreContainer">
+          <EntitySet Name="Course" EntityType="Self.Course" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Student" EntityType="Self.Student" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Teacher" EntityType="Self.Teacher" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StudentAddress" EntityType="Self.StudentAddress" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [StudentAddress].[StudentID] AS [StudentID], 
+    [StudentAddress].[Address1] AS [Address1], 
+    [StudentAddress].[Address2] AS [Address2], 
+    [StudentAddress].[City] AS [City], 
+    [StudentAddress].[State] AS [State]
+    FROM [dbo].[StudentAddress] AS [StudentAddress]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Course_Teacher" Association="Self.FK_Course_Teacher">
+            <End Role="Teacher" EntitySet="Teacher" />
+            <End Role="Course" EntitySet="Course" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StudentAddress_Student" Association="Self.FK_StudentAddress_Student">
+            <End Role="Student" EntitySet="Student" />
+            <End Role="StudentAddress" EntitySet="StudentAddress" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SchoolDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Course">
+          <Key>
+            <PropertyRef Name="CourseID" />
+          </Key>
+          <Property Name="CourseID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CourseName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Location" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TeacherID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Teacher" Relationship="Self.FK_Course_Teacher" FromRole="Course" ToRole="Teacher" />
+        </EntityType>
+        <EntityType Name="Student">
+          <Key>
+            <PropertyRef Name="StuıdentID" />
+          </Key>
+          <Property Name="StuıdentID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StudentName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="StudentAddress" Relationship="Self.FK_StudentAddress_Student" FromRole="Student" ToRole="StudentAddress" />
+        </EntityType>
+        <EntityType Name="Teacher">
+          <Key>
+            <PropertyRef Name="TeacherID" />
+          </Key>
+          <Property Name="TeacherID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TeacherName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Course" Relationship="Self.FK_Course_Teacher" FromRole="Teacher" ToRole="Course" />
+        </EntityType>
+        <EntityType Name="StudentAddress">
+          <Key>
+            <PropertyRef Name="StudentID" />
+            <PropertyRef Name="Address1" />
+            <PropertyRef Name="City" />
+            <PropertyRef Name="State" />
+          </Key>
+          <Property Name="StudentID" Type="Int32" Nullable="false" />
+          <Property Name="Address1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Address2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="State" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Student" Relationship="Self.FK_StudentAddress_Student" FromRole="StudentAddress" ToRole="Student" />
+        </EntityType>
+        <Association Name="FK_Course_Teacher">
+          <End Role="Teacher" Type="Self.Teacher" Multiplicity="1" />
+          <End Role="Course" Type="Self.Course" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Teacher">
+              <PropertyRef Name="TeacherID" />
+            </Principal>
+            <Dependent Role="Course">
+              <PropertyRef Name="TeacherID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StudentAddress_Student">
+          <End Role="Student" Type="Self.Student" Multiplicity="1" />
+          <End Role="StudentAddress" Type="Self.StudentAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student">
+              <PropertyRef Name="StuıdentID" />
+            </Principal>
+            <Dependent Role="StudentAddress">
+              <PropertyRef Name="StudentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="SchoolDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Course" EntityType="Self.Course" />
+          <EntitySet Name="Student" EntityType="Self.Student" />
+          <EntitySet Name="Teacher" EntityType="Self.Teacher" />
+          <EntitySet Name="StudentAddress" EntityType="Self.StudentAddress" />
+          <AssociationSet Name="FK_Course_Teacher" Association="Self.FK_Course_Teacher">
+            <End Role="Teacher" EntitySet="Teacher" />
+            <End Role="Course" EntitySet="Course" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StudentAddress_Student" Association="Self.FK_StudentAddress_Student">
+            <End Role="Student" EntitySet="Student" />
+            <End Role="StudentAddress" EntitySet="StudentAddress" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="SchoolDBModelStoreContainer" CdmEntityContainer="SchoolDBEntities">
+          <EntitySetMapping Name="Course">
+            <EntityTypeMapping TypeName="SchoolDBModel.Course">
+              <MappingFragment StoreEntitySet="Course">
+                <ScalarProperty Name="CourseID" ColumnName="CourseID" />
+                <ScalarProperty Name="CourseName" ColumnName="CourseName" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="TeacherID" ColumnName="TeacherID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Student">
+            <EntityTypeMapping TypeName="SchoolDBModel.Student">
+              <MappingFragment StoreEntitySet="Student">
+                <ScalarProperty Name="StuıdentID" ColumnName="StuıdentID" />
+                <ScalarProperty Name="StudentName" ColumnName="StudentName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Teacher">
+            <EntityTypeMapping TypeName="SchoolDBModel.Teacher">
+              <MappingFragment StoreEntitySet="Teacher">
+                <ScalarProperty Name="TeacherID" ColumnName="TeacherID" />
+                <ScalarProperty Name="TeacherName" ColumnName="TeacherName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StudentAddress">
+            <EntityTypeMapping TypeName="SchoolDBModel.StudentAddress">
+              <MappingFragment StoreEntitySet="StudentAddress">
+                <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+                <ScalarProperty Name="Address1" ColumnName="Address1" />
+                <ScalarProperty Name="Address2" ColumnName="Address2" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="State" ColumnName="State" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
